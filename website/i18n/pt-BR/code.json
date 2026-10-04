@@ -1,0 +1,65 @@
+{
+  "home.title": {
+    "message": "SDK, servidor MCP e CLI do LibreTranslate"
+  },
+  "home.tagline": {
+    "message": "Um SDK TypeScript não oficial para a API do LibreTranslate, com um servidor MCP e uma CLI construídos sobre ele. Use-o no código, a partir de um agente de IA ou no terminal: os três compartilham o mesmo cliente."
+  },
+  "home.getStarted": {
+    "message": "Começar"
+  },
+  "home.sdk.description": {
+    "message": "Um cliente tipado para a API do LibreTranslate, gerado pelo orval a partir de uma spec OpenAPI: tradução de textos e listas, detecção de idioma, arquivos e sugestões, com a API key enviada para você."
+  },
+  "home.mcp.description": {
+    "message": "Tradução automática para o Claude Code, o Codex, o OpenCode ou qualquer cliente MCP: textos, listas e documentos inteiros, detecção de idioma e ferramentas genéricas para a API crua. Por stdio ou Streamable HTTP."
+  },
+  "home.cli.description": {
+    "message": "Cada ferramenta MCP como um comando de terminal, mais libretranslate mcp para rodar o servidor em segundo plano, iniciá-lo no login e registrá-lo nos seus clientes."
+  },
+  "home.mcp.title": {
+    "message": "Servidor MCP"
+  },
+  "home.badge": {
+    "message": "TypeScript · LibreTranslate · MCP · CLI"
+  },
+  "home.headline": {
+    "message": "Tradução automática open source, tipada de ponta a ponta"
+  },
+  "home.install.copy": {
+    "message": "Copiar"
+  },
+  "home.install.copied": {
+    "message": "Copiado"
+  },
+  "theme.SearchBar.label": {
+    "message": "Buscar"
+  },
+  "theme.SearchBar.seeAll": {
+    "message": "Ver todos os resultados"
+  },
+  "theme.SearchBar.noResultsText": {
+    "message": "Nenhum resultado"
+  },
+  "theme.SearchBar.searchInContext": {
+    "message": "Ver todos os resultados em \"{context}\""
+  },
+  "theme.SearchBar.seeAllOutsideContext": {
+    "message": "Ver todos os resultados fora de \"{context}\""
+  },
+  "theme.SearchPage.existingResultsTitle": {
+    "message": "Resultados da busca por \"{query}\""
+  },
+  "theme.SearchPage.emptyResultsTitle": {
+    "message": "Buscar na documentação"
+  },
+  "theme.SearchPage.documentsFound.plurals": {
+    "message": "1 documento encontrado|{count} documentos encontrados"
+  },
+  "theme.SearchPage.noResultsText": {
+    "message": "Nenhum documento encontrado"
+  },
+  "theme.SearchPage.searchContext.everywhere": {
+    "message": "Em todo lugar"
+  }
+}

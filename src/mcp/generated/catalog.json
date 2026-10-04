@@ -1,0 +1,168 @@
+{
+ "generatedFrom": "spec/openapi.yml",
+ "operations": [
+  {
+   "operationId": "detect",
+   "tag": "translate",
+   "http": "POST",
+   "path": "/detect",
+   "summary": "Detect the language of a text",
+   "doc": "Returns the candidate languages, most likely first, each with a confidence from 0 to 100.",
+   "kind": "read",
+   "body": {
+    "required": true,
+    "schema": {
+     "$ref": "#/components/schemas/DetectRequest"
+    }
+   }
+  },
+  {
+   "operationId": "getFrontendSettings",
+   "tag": "meta",
+   "http": "GET",
+   "path": "/frontend/settings",
+   "summary": "Read the instance settings",
+   "doc": "The settings the instance publishes for its web page: whether an API key is required, the character limit, file translation, suggestions and the default languages.",
+   "kind": "read"
+  },
+  {
+   "operationId": "health",
+   "tag": "meta",
+   "http": "GET",
+   "path": "/health",
+   "summary": "Check the instance health",
+   "doc": "",
+   "kind": "read"
+  },
+  {
+   "operationId": "listLanguages",
+   "tag": "meta",
+   "http": "GET",
+   "path": "/languages",
+   "summary": "List the supported languages",
+   "doc": "Every language the instance translates from, each with the languages it translates into.",
+   "kind": "read"
+  },
+  {
+   "operationId": "suggest",
+   "tag": "feedback",
+   "http": "POST",
+   "path": "/suggest",
+   "summary": "Suggest a better translation",
+   "doc": "Sends a corrected translation back to the instance. Only accepted when the instance enables suggestions (`suggestions` in the frontend settings).",
+   "kind": "write",
+   "body": {
+    "required": true,
+    "schema": {
+     "$ref": "#/components/schemas/SuggestRequest"
+    }
+   }
+  },
+  {
+   "operationId": "translate",
+   "tag": "translate",
+   "http": "POST",
+   "path": "/translate",
+   "summary": "Translate text",
+   "doc": "Translates one text or a list of texts. With a list, `translatedText` (and `detectedLanguage` or `alternatives`, when present) are lists in the same order.",
+   "kind": "read",
+   "body": {
+    "required": true,
+    "schema": {
+     "$ref": "#/components/schemas/TranslateRequest"
+    }
+   }
+  }
+ ],
+ "schemas": {
+  "DetectRequest": {
+   "type": "object",
+   "required": [
+    "q"
+   ],
+   "properties": {
+    "q": {
+     "type": "string",
+     "description": "The text whose language is detected."
+    }
+   }
+  },
+  "LanguageCode": {
+   "type": "string",
+   "description": "A language code as listed by `GET /languages` (e.g. `en`, `pt-BR`, `zh-Hans`).",
+   "minLength": 1
+  },
+  "SuggestRequest": {
+   "type": "object",
+   "required": [
+    "q",
+    "s",
+    "source",
+    "target"
+   ],
+   "properties": {
+    "q": {
+     "type": "string",
+     "description": "The original text."
+    },
+    "s": {
+     "type": "string",
+     "description": "The suggested translation."
+    },
+    "source": {
+     "$ref": "#/components/schemas/LanguageCode"
+    },
+    "target": {
+     "$ref": "#/components/schemas/LanguageCode"
+    }
+   }
+  },
+  "TranslateRequest": {
+   "type": "object",
+   "required": [
+    "q",
+    "source",
+    "target"
+   ],
+   "properties": {
+    "q": {
+     "description": "The text, or a list of texts, to translate.",
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      }
+     ]
+    },
+    "source": {
+     "type": "string",
+     "minLength": 1,
+     "description": "The source language code, or `auto` to detect it."
+    },
+    "target": {
+     "$ref": "#/components/schemas/LanguageCode"
+    },
+    "format": {
+     "type": "string",
+     "enum": [
+      "text",
+      "html"
+     ],
+     "default": "text",
+     "description": "`html` keeps the markup and translates only the text in it."
+    },
+    "alternatives": {
+     "type": "integer",
+     "minimum": 0,
+     "default": 0,
+     "description": "How many alternative translations to return besides the main one."
+    }
+   }
+  }
+ }
+}

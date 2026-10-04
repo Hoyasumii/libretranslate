@@ -1,0 +1,404 @@
+# The LibreTranslate HTTP API, described from its public documentation (docs.libretranslate.com) and from
+# the responses of a running instance. Written for this package: it is the single source of `pnpm codegen`
+# (orval → src/generated/, scripts/build-mcp-catalog.ts → src/mcp/generated/catalog.json).
+openapi: 3.1.0
+info:
+  title: LibreTranslate API
+  version: "1"
+  description: >-
+    Machine translation over HTTP. Every request body is JSON except file translation (multipart). An
+    instance that issues API keys expects `api_key` in the body of every translation request; an instance
+    without keys ignores it.
+  license:
+    name: MIT
+    identifier: MIT
+servers:
+  - url: http://localhost:5000
+tags:
+  - name: translate
+    description: Translation and language detection.
+  - name: meta
+    description: The instance's languages, settings and health.
+  - name: feedback
+    description: Translation suggestions sent back to the instance.
+
+paths:
+  /translate:
+    post:
+      tags: [translate]
+      operationId: translate
+      summary: Translate text
+      description: >-
+        Translates one text or a list of texts. With a list, `translatedText` (and `detectedLanguage` or
+        `alternatives`, when present) are lists in the same order.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TranslateRequest"
+      responses:
+        "200":
+          description: The translation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranslateResponse"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /translate_file:
+    post:
+      tags: [translate]
+      operationId: translateFile
+      summary: Translate a file
+      description: >-
+        Uploads a document and translates it. The response holds a URL the translated file is downloaded
+        from. The accepted extensions are in `supportedFilesFormat` of the frontend settings.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/TranslateFileRequest"
+      responses:
+        "200":
+          description: Where to download the translated file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranslateFileResponse"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /detect:
+    post:
+      tags: [translate]
+      operationId: detect
+      summary: Detect the language of a text
+      description: Returns the candidate languages, most likely first, each with a confidence from 0 to 100.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DetectRequest"
+      responses:
+        "200":
+          description: The candidate languages.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Detection"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /languages:
+    get:
+      tags: [meta]
+      operationId: listLanguages
+      summary: List the supported languages
+      description: Every language the instance translates from, each with the languages it translates into.
+      responses:
+        "200":
+          description: The languages.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Language"
+
+  /frontend/settings:
+    get:
+      tags: [meta]
+      operationId: getFrontendSettings
+      summary: Read the instance settings
+      description: >-
+        The settings the instance publishes for its web page: whether an API key is required, the character
+        limit, file translation, suggestions and the default languages.
+      responses:
+        "200":
+          description: The settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FrontendSettings"
+
+  /suggest:
+    post:
+      tags: [feedback]
+      operationId: suggest
+      summary: Suggest a better translation
+      description: >-
+        Sends a corrected translation back to the instance. Only accepted when the instance enables
+        suggestions (`suggestions` in the frontend settings).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SuggestRequest"
+      responses:
+        "200":
+          description: The suggestion was stored.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuggestResponse"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /health:
+    get:
+      tags: [meta]
+      operationId: health
+      summary: Check the instance health
+      responses:
+        "200":
+          description: The instance is up.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        "500": { $ref: "#/components/responses/ServerError" }
+
+components:
+  responses:
+    BadRequest:
+      description: A parameter is missing or invalid, or the instance requires an API key that was not sent.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    Forbidden:
+      description: The API key is invalid, or the client is banned.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    TooManyRequests:
+      description: The request rate limit was exceeded.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    ServerError:
+      description: The translation failed on the instance.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  schemas:
+    ApiKey:
+      type: string
+      description: The API key, for instances that issue keys (e.g. libretranslate.com).
+
+    LanguageCode:
+      type: string
+      description: A language code as listed by `GET /languages` (e.g. `en`, `pt-BR`, `zh-Hans`).
+      minLength: 1
+
+    TranslateRequest:
+      type: object
+      required: [q, source, target]
+      properties:
+        q:
+          description: The text, or a list of texts, to translate.
+          oneOf:
+            - type: string
+            - type: array
+              items: { type: string }
+        source:
+          type: string
+          minLength: 1
+          description: The source language code, or `auto` to detect it.
+        target:
+          $ref: "#/components/schemas/LanguageCode"
+        format:
+          type: string
+          enum: [text, html]
+          default: text
+          description: "`html` keeps the markup and translates only the text in it."
+        alternatives:
+          type: integer
+          minimum: 0
+          default: 0
+          description: How many alternative translations to return besides the main one.
+        api_key:
+          $ref: "#/components/schemas/ApiKey"
+
+    TranslateResponse:
+      type: object
+      required: [translatedText]
+      properties:
+        translatedText:
+          description: The translation; a list when `q` was a list.
+          oneOf:
+            - type: string
+            - type: array
+              items: { type: string }
+        detectedLanguage:
+          description: The detected source language, when `source` was `auto`; a list when `q` was a list.
+          oneOf:
+            - $ref: "#/components/schemas/Detection"
+            - type: array
+              items: { $ref: "#/components/schemas/Detection" }
+        alternatives:
+          description: The alternative translations, when asked for; one list per text when `q` was a list.
+          oneOf:
+            - type: array
+              items: { type: string }
+            - type: array
+              items:
+                type: array
+                items: { type: string }
+
+    TranslateFileRequest:
+      type: object
+      required: [file, source, target]
+      properties:
+        file:
+          type: string
+          format: binary
+          description: The document to translate.
+        source:
+          type: string
+          minLength: 1
+          description: The source language code, or `auto` to detect it.
+        target:
+          $ref: "#/components/schemas/LanguageCode"
+        api_key:
+          $ref: "#/components/schemas/ApiKey"
+
+    TranslateFileResponse:
+      type: object
+      required: [translatedFileUrl]
+      properties:
+        translatedFileUrl:
+          type: string
+          description: The URL the translated file is downloaded from.
+
+    DetectRequest:
+      type: object
+      required: [q]
+      properties:
+        q:
+          type: string
+          description: The text whose language is detected.
+        api_key:
+          $ref: "#/components/schemas/ApiKey"
+
+    Detection:
+      type: object
+      required: [language, confidence]
+      properties:
+        language:
+          type: string
+          description: The language code.
+        confidence:
+          type: number
+          description: The confidence, from 0 to 100.
+
+    Language:
+      type: object
+      required: [code, name, targets]
+      properties:
+        code:
+          type: string
+          description: The language code.
+        name:
+          type: string
+          description: The language name, in English.
+        targets:
+          type: array
+          items: { type: string }
+          description: The codes this language translates into.
+
+    LanguageRef:
+      type: object
+      required: [code, name]
+      properties:
+        code: { type: string }
+        name: { type: string }
+
+    FrontendSettings:
+      type: object
+      required: [apiKeys, charLimit, keyRequired, suggestions, filesTranslation, supportedFilesFormat]
+      additionalProperties: true
+      properties:
+        apiKeys:
+          type: boolean
+          description: Whether the instance issues API keys.
+        keyRequired:
+          type: boolean
+          description: Whether every translation request needs an API key.
+        charLimit:
+          type: integer
+          description: The most characters one request may translate; `-1` means no limit.
+        frontendTimeout:
+          type: integer
+          description: The delay, in ms, the instance's web page waits before translating what is typed.
+        suggestions:
+          type: boolean
+          description: Whether `POST /suggest` is enabled.
+        filesTranslation:
+          type: boolean
+          description: Whether `POST /translate_file` is enabled.
+        supportedFilesFormat:
+          type: array
+          items: { type: string }
+          description: The file extensions `POST /translate_file` accepts (e.g. `.txt`, `.docx`).
+        language:
+          type: object
+          description: The default source and target languages of the instance's web page.
+          properties:
+            source: { $ref: "#/components/schemas/LanguageRef" }
+            target: { $ref: "#/components/schemas/LanguageRef" }
+
+    SuggestRequest:
+      type: object
+      required: [q, s, source, target]
+      properties:
+        q:
+          type: string
+          description: The original text.
+        s:
+          type: string
+          description: The suggested translation.
+        source:
+          $ref: "#/components/schemas/LanguageCode"
+        target:
+          $ref: "#/components/schemas/LanguageCode"
+        api_key:
+          $ref: "#/components/schemas/ApiKey"
+
+    SuggestResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+
+    Health:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          description: "`ok` when the instance is up."
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          description: What went wrong.
