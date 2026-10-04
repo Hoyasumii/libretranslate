@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/Hoyasumii/libretranslate/security/advisories/new
+    about: Report it privately, never in a public issue.
+  - name: Documentation
+    url: https://hoyasumii.github.io/libretranslate/
+    about: Guides for the SDK, the MCP server and the CLI.
+  - name: A problem with LibreTranslate itself
+    url: https://github.com/LibreTranslate/libretranslate/issues
+    about: Bugs in the LibreTranslate app or its API belong upstream.
