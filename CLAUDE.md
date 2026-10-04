@@ -34,10 +34,12 @@ pnpm docs:serve           # Serve website/build/ (where search works; it does no
 GIT_USER=<user> pnpm docs:deploy  # Build and push the site to the gh-pages branch (GitHub Pages)
 ```
 
-No CI: husky runs lint and format on commit, types, knip and unit tests on push. Commits follow
+Husky runs lint and format on commit, types, knip and unit tests on push. Commits follow
 Conventional Commits (commitlint). Every script must run on Windows too: no `rm`, `$VAR`, `VAR=1 cmd`.
-After its checks, `pre-push` hands its refs to `scripts/deploy-site.mjs` (plane's), which deploys the site after a
-push of `main` that touches `website/` or `src/`. `LIBRETRANSLATE_SKIP_SITE_DEPLOY=1` skips it.
+`.github/workflows/cd.yml` (Continuous Delivery) runs on every push to `main`: the same checks and the build, then
+`npm publish` (Trusted Publishing, no token) plus a `v<version>` tag and GitHub release when `package.json`'s version
+is not on npm yet, and `pnpm docs:deploy` to `gh-pages` when the push touches `website/` or `src/`. To release, bump
+`version` and merge to `main`.
 
 ## Architecture
 

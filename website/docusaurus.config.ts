@@ -77,7 +77,7 @@ const config: Config = {
   tagline: "An unofficial TypeScript SDK for the LibreTranslate API, with an MCP server and a CLI built on top of it.",
   favicon: "img/favicon.png",
 
-  // GitHub Pages, published from the `gh-pages` branch by `pnpm docs:deploy`.
+  // GitHub Pages, published from the `gh-pages` branch by `pnpm docs:deploy` (run by .github/workflows/cd.yml).
   url: "https://hoyasumii.github.io",
   baseUrl,
   organizationName: "Hoyasumii",
