@@ -1,0 +1,24 @@
+# @hoyasumii/libretranslate
+
+> An unofficial TypeScript SDK for the LibreTranslate API, with an MCP server and a CLI built on top of it.
+
+This file contains links to documentation sections following the llmstxt.org standard.
+
+## Table of Contents
+
+- [Getting started](https://hoyasumii.github.io/libretranslate/docs/intro): An unofficial TypeScript SDK for the LibreTranslate API, with an MCP server and a CLI built on it: what each part does and how to install it.
+- [Errors](https://hoyasumii.github.io/libretranslate/docs/sdk/errors): LibreTranslateApiError and the other error classes, the statuses an instance answers, and how the API key is masked.
+- [Files](https://hoyasumii.github.io/libretranslate/docs/sdk/files): Translating whole documents: uploading a file, downloading the translation, and the formats an instance accepts.
+- [Overview](https://hoyasumii.github.io/libretranslate/docs/sdk/overview): The LibreTranslate client: its options, its methods, and how it is generated from the OpenAPI spec by orval.
+- [Translation](https://hoyasumii.github.io/libretranslate/docs/sdk/translation): Translating texts and lists, detecting the source language, HTML, alternatives, language codes and suggestions.
+- [Configuration](https://hoyasumii.github.io/libretranslate/docs/mcp/configuration): The settings the server and the CLI read, where they are saved, and the order they are resolved in.
+- [Generic tools](https://hoyasumii.github.io/libretranslate/docs/mcp/generic-tools): libretranslate_resources, libretranslate_describe and libretranslate_call: the raw LibreTranslate API, operation by operation.
+- [Overview](https://hoyasumii.github.io/libretranslate/docs/mcp/overview): The LibreTranslate MCP server: its transports, its tools, and the HTTP mode.
+- [Programmatic use](https://hoyasumii.github.io/libretranslate/docs/mcp/programmatic): Run the LibreTranslate MCP server from your own code: over stdio, over HTTP, or on any MCP transport.
+- [Setup](https://hoyasumii.github.io/libretranslate/docs/mcp/setup): Save your settings once and register the LibreTranslate MCP server in Claude Code, Codex and OpenCode.
+- [Tools](https://hoyasumii.github.io/libretranslate/docs/mcp/tools): The curated MCP tools: translating texts and files, detecting languages, listing them, the instance status and suggestions.
+- [libretranslate mcp](https://hoyasumii.github.io/libretranslate/docs/cli/mcp-commands): libretranslate mcp: save the configuration, run the server in the background, start it at login and register it in your MCP clients.
+- [CLI overview](https://hoyasumii.github.io/libretranslate/docs/cli/overview): The libretranslate command: every MCP tool as a subcommand, with the tool's input schema as its flags.
+- [libretranslate service](https://hoyasumii.github.io/libretranslate/docs/cli/service): libretranslate service: run LibreTranslate locally in a Docker container, with up, down, status and logs.
+- [Windows and WSL](https://hoyasumii.github.io/libretranslate/docs/cli/windows): Using the CLI on Windows 10/11 from PowerShell or cmd, and registering the server in Windows clients from WSL.
+- [Contributing](https://hoyasumii.github.io/libretranslate/docs/contributing): Set up the repository, run the checks and the tests, follow API changes, and build this documentation site.
